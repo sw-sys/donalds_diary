@@ -15,11 +15,12 @@ status_options = ['Seen', 'Not seen', 'Unknown']
 
 tab1_layout = [
                 [sg.Text(' ')],
-                [sg.Text('Status:'), sg.Push(), sg.Combo(status_options, default_value=status_options[0], key='STATUS'), sg.Push(), sg.Push(), sg.Push()],
-                [sg.Text('Enter Date: DD-MM-YYYY'),sg.Input(key='DATE'), sg.Push(), sg.CalendarButton('Select', target='DATE', format='%d-%m-%Y')],
-                [sg.Text('Enter a time (HH:MM:SS):'), sg.Input(key='TIME', enable_events=True)],
-                [sg.Text('Location (53.3924659, -2.0594862):'), sg.Push(), sg.Input(key='LOCATION'), sg.Push()],
-                [sg.Text('Image:'), sg.Push(), sg.Input(key='MEDIA'), sg.FileBrowse()],
+                [sg.Text('Status:'), sg.Combo(status_options, default_value=status_options[0], key='STATUS'), sg.Push(), sg.Push()],
+                #[sg.Text('Status:'), sg.Push(), sg.Combo(status_options, default_value=status_options[0], key='STATUS'), sg.Push(), sg.Push()],
+                [sg.Text('Enter Date DD-MM-YYYY'),sg.Input(key='DATE'), sg.Push(), sg.CalendarButton('Select', target='DATE', format='%d-%m-%Y')],
+                [sg.Text('Enter a time HH:MM:SS'), sg.Push(), sg.Input(key='TIME', enable_events=True), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
+                [sg.Text('Location (co-ordinates)'), sg.Push(), sg.Input(default_text ='53.3924659, -2.0594862', key='LOCATION'), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
+                [sg.Text('Upload an image'), sg.Push(), sg.Input(key='MEDIA'), sg.FileBrowse()],
                 [sg.Text(' ')],
                 [sg.OK('Submit'), sg.Cancel('Clear'), sg.Push(), sg.Button('Exit')]]
 
@@ -39,21 +40,61 @@ tab5_layout = [[sg.Text('All Records here and feature to export to .csv')]]
 tab_group_layout = [[sg.Tab('Submit', tab1_layout), sg.Tab('Calendar', tab2_layout), sg.Tab('Map', tab3_layout), sg.Tab('Media', tab4_layout), sg.Tab('Records', tab5_layout)]]
 tab_group = sg.TabGroup(tab_group_layout)
 
-layout = [[[sg.Text('Where\'s Donald Today?', font=('Arial',20))], 
-           [sg.Text(' ')],
-           tab_group]]
+# Header and tab holder
+
+header_layout =[
+    #[sg.Image(r'C:\Users\Sheldon\Documents\Coding\Donalds_Diary\Mallard_head.png')],
+    [sg.Text('Where\'s Donald Today?                       ', font=('Arial',30), background_color='#69888D', text_color='white')], 
+    [sg.Text('')],
+]
+
+window_layout = [
+    header_layout,
+    [tab_group]
+]
 
 # window event
-window = sg.Window('Donald\'s Diary', layout, no_titlebar=True, grab_anywhere=True)
+window = sg.Window('Donald\'s Diary', window_layout, no_titlebar=True, grab_anywhere=True)
+
+def clear_inputs():
+    for key in values:
+        window['TIME'].update('')
+        window['DATE'].update('')
+        window['STATUS'].update('')
+        window['MEDIA'].update('')
+        window['LOCATION'].update('')
+    return None
 
 while True:
     event, values=window.read()
-    if event == sg.WIN_CLOSED or 'Exit':
+    if event in (sg.WIN_CLOSED, 'Exit'):
         break
-    elif event == sg.OK():
+    if event == 'Clear':
+        clear_inputs()
+    if event == 'Submit':
         time = values['TIME']
+        if time =='':
+            sg.PopupError('QUACK ALERT! Please insert a time')
         date = values['DATE']
+        if date =='':
+            sg.PopupError('QUACK ALERT! Please insert a date')
         status = values['STATUS']
-        media = values['MEDIA']
+        if status =='':
+            sg.PopupError('QUACK ALERT! Please insert a status')
         location = values['LOCATION']
+        if status == '':
+            sg.PopupError('QUACK ALERT! Please insert a location')
+        media = values['MEDIA']
+    else:
+        try:
+            summary_list = "The following bread crumbs have been added to the quackbase"
+            choice = sg.PopukOKCancel(summary_list, 'Please confirm entry')
+            if choice =='OK':
+                clear_inputs()
+                sg.PopupQuick('Saved to quackbase')
+            else:
+                sg.PopupOK('Edit entry')
+        except:
+            sg.Popup('MAJOR QUACK ALERT! Fetch the peas and try again.')
+
 window.close()
