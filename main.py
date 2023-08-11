@@ -18,9 +18,9 @@ tab1_layout = [
                 [sg.Text('Status:'), sg.Combo(status_options, default_value=status_options[0], key='STATUS'), sg.Push(), sg.Push()],
                 #[sg.Text('Status:'), sg.Push(), sg.Combo(status_options, default_value=status_options[0], key='STATUS'), sg.Push(), sg.Push()],
                 [sg.Text('Enter Date DD-MM-YYYY'),sg.Input(key='DATE'), sg.Push(), sg.CalendarButton('Select', target='DATE', format='%d-%m-%Y')],
-                [sg.Text('Enter a time HH:MM:SS'), sg.Push(), sg.Input(key='TIME', enable_events=True), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
+                [sg.Text('Enter a time HH:MM:SS'), sg.Push(), sg.Input(key='TIME', enable_events=False), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
                 [sg.Text('Location (co-ordinates)'), sg.Push(), sg.Input(default_text ='53.3924659, -2.0594862', key='LOCATION'), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
-                [sg.Text('Upload an image'), sg.Push(), sg.Input(key='MEDIA'), sg.FileBrowse()],
+                #[sg.Text('Upload an image'), sg.Push(), sg.Input(key='MEDIA'), sg.FileBrowse()],
                 [sg.Text(' ')],
                 [sg.OK('Submit'), sg.Cancel('Clear'), sg.Push(), sg.Button('Exit')]]
 
@@ -61,40 +61,40 @@ def clear_inputs():
         window['TIME'].update('')
         window['DATE'].update('')
         window['STATUS'].update('')
-        window['MEDIA'].update('')
+        #window['MEDIA'].update('')
         window['LOCATION'].update('')
     return None
 
 while True:
     event, values=window.read()
-    if event in (sg.WIN_CLOSED, 'Exit'):
+    if event in (sg.WIN_CLOSED or 'Exit'):
         break
     if event == 'Clear':
         clear_inputs()
     if event == 'Submit':
-        time = values['TIME']
-        if time =='':
-            sg.PopupError('QUACK ALERT! Please insert a time')
+        status = values['STATUS']
+        if status=='':
+            sg.PopupError('QUACK ALERT! Please insert a status')
         date = values['DATE']
         if date =='':
             sg.PopupError('QUACK ALERT! Please insert a date')
-        status = values['STATUS']
-        if status =='':
-            sg.PopupError('QUACK ALERT! Please insert a status')
+        time = values['TIME']
+        if time =='':
+            sg.PopupError('QUACK ALERT! Please insert a time')
         location = values['LOCATION']
         if status == '':
             sg.PopupError('QUACK ALERT! Please insert a location')
-        media = values['MEDIA']
-    else:
-        try:
-            summary_list = "The following bread crumbs have been added to the quackbase"
-            choice = sg.PopukOKCancel(summary_list, 'Please confirm entry')
-            if choice =='OK':
-                clear_inputs()
-                sg.PopupQuick('Saved to quackbase')
-            else:
-                sg.PopupOK('Edit entry')
-        except:
-            sg.Popup('MAJOR QUACK ALERT! Fetch the peas and try again.')
+        #media = values['MEDIA']
+        else:
+            try:
+                summary_list = "The following bread crumbs have been added to the quackbase"
+                choice = sg.PopupOKCancel(summary_list, 'Please confirm entry')
+                if choice =='OK':
+                    clear_inputs()
+                    sg.PopupQuick('Saved to quackbase!')
+                else:
+                    sg.PopupOK('Edit entry')
+            except:
+                sg.Popup('MAJOR QUACK ALERT! Fetch the peas and try again.')
 
 window.close()
