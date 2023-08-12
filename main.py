@@ -36,7 +36,7 @@ tab1_layout = [
                 [sg.Text('Location (co-ordinates)'), sg.Push(), sg.Input(key='LOCATION'), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
                 #[sg.Text('Upload an image'), sg.Push(), sg.Input(key='MEDIA'), sg.FileBrowse()],
                 [sg.Text(' ')],
-                [sg.OK('Submit'), sg.Cancel('Clear'), sg.Push(), sg.Button('Exit')]]
+                [sg.Button('Submit'), sg.Button('Clear'), sg.Push(), sg.Button('Exit')]]
 
 # TAB 2 content
 tab2_layout = [[sg.Text('Overview of when Donald was spotted this month')]]
@@ -79,6 +79,20 @@ def clear_inputs():
         window['LOCATION'].update('')
     return None
 
+def save_data_to_database():
+    conn=sqlite3.connect('donalds_data.db')
+    c = conn.cursor() # cursor allows interigation of data
+    c.execute("INSERT INTO sightings VALUES (:status, :date, :time, :location)",
+              {
+                  'status': values['STATUS'],
+                  'date': values['DATE'],
+                  'time': values['TIME'],
+                  'location': values['LOCATION'],
+              })
+
+    conn.commit()
+    conn.close()
+
 while True:
     event, values=window.read()
     if event in (sg.WIN_CLOSED or 'Exit'):
@@ -105,6 +119,7 @@ while True:
                 choice = sg.PopupOKCancel(summary_list, 'Please confirm entry')
                 if choice =='OK':
                     clear_inputs()
+                    save_data_to_database()
                     sg.PopupQuick('Saved to quackbase!')
                 else:
                     sg.PopupOK('Edit entry')
