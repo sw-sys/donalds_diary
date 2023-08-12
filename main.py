@@ -1,6 +1,21 @@
 import PySimpleGUI as sg
+import sqlite3
 
-# Design
+### DATABASE
+
+conn = sqlite3.connect('donalds_data.db')
+c = conn.cursor() # cursor allows interigation of data
+c.execute("""CREATE TABLE IF NOT EXISTS sightings (
+          status text,
+          date text,
+          time text,
+          location real
+          )""")
+
+conn.commit()
+conn.close()
+
+### DESIGN
 sg.theme('DarkGray6')
 sg.set_options(font=('Arial 12'), text_color='white')
 
@@ -16,10 +31,9 @@ status_options = ['Seen', 'Not seen', 'Unknown']
 tab1_layout = [
                 [sg.Text(' ')],
                 [sg.Text('Status:'), sg.Combo(status_options, default_value=status_options[0], key='STATUS'), sg.Push(), sg.Push()],
-                #[sg.Text('Status:'), sg.Push(), sg.Combo(status_options, default_value=status_options[0], key='STATUS'), sg.Push(), sg.Push()],
-                [sg.Text('Enter Date DD-MM-YYYY'),sg.Input(key='DATE'), sg.Push(), sg.CalendarButton('Select', target='DATE', format='%d-%m-%Y')],
+                [sg.Text('Enter Date YYYY-MM-DD'),sg.Input(key='DATE'), sg.Push(), sg.CalendarButton('Select', target='DATE', format='%Y-%m-%d')],
                 [sg.Text('Enter a time HH:MM:SS'), sg.Push(), sg.Input(key='TIME', enable_events=False), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
-                [sg.Text('Location (co-ordinates)'), sg.Push(), sg.Input(default_text ='53.3924659, -2.0594862', key='LOCATION'), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
+                [sg.Text('Location (co-ordinates)'), sg.Push(), sg.Input(key='LOCATION'), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
                 #[sg.Text('Upload an image'), sg.Push(), sg.Input(key='MEDIA'), sg.FileBrowse()],
                 [sg.Text(' ')],
                 [sg.OK('Submit'), sg.Cancel('Clear'), sg.Push(), sg.Button('Exit')]]
@@ -73,7 +87,7 @@ while True:
         clear_inputs()
     if event == 'Submit':
         status = values['STATUS']
-        if status=='':
+        if status == '':
             sg.PopupError('QUACK ALERT! Please insert a status')
         date = values['DATE']
         if date =='':
