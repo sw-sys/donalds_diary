@@ -36,7 +36,8 @@ tab1_layout = [
                 [sg.Text('Location (co-ordinates)'), sg.Push(), sg.Input(key='LOCATION'), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
                 #[sg.Text('Upload an image'), sg.Push(), sg.Input(key='MEDIA'), sg.FileBrowse()],
                 [sg.Text(' ')],
-                [sg.Button('Submit'), sg.Button('Clear'), sg.Push(), sg.Button('Exit')]]
+                [sg.Button('Submit'), sg.Button('Clear'), sg.Push(), sg.Button('Show records'), sg.Push(), sg.Button('Exit')]
+                ]
 
 # TAB 2 content
 tab2_layout = [[sg.Text('Overview of when Donald was spotted this month')]]
@@ -48,10 +49,16 @@ tab3_layout = [[sg.Text('Map of Donald\'s locations')]]
 tab4_layout = [[sg.Text('Photos of Donald')]]
 
 # TAB 5 content
-tab5_layout = [[sg.Text('All Records here and feature to export to .csv')]]
+tab5_layout = [[sg.Text('All Records here and feature to export to .csv')],
+                [sg.Button('Show records')]]
 
 # define layouts for tabs
-tab_group_layout = [[sg.Tab('Submit', tab1_layout), sg.Tab('Calendar', tab2_layout), sg.Tab('Map', tab3_layout), sg.Tab('Media', tab4_layout), sg.Tab('Records', tab5_layout)]]
+tab_group_layout = [[sg.Tab('Submit', tab1_layout), 
+                     sg.Tab('Calendar', tab2_layout), 
+                     sg.Tab('Map', tab3_layout), 
+                     sg.Tab('Media', tab4_layout), 
+                     sg.Tab('Records', tab5_layout)]]
+
 tab_group = sg.TabGroup(tab_group_layout)
 
 # Header and tab holder
@@ -69,6 +76,51 @@ window_layout = [
 
 # window event
 window = sg.Window('Donald\'s Diary', window_layout, no_titlebar=True, grab_anywhere=True)
+
+### FUNCs for views
+# Records tab
+
+# func gets records from db
+def retrieve_records():
+    results = []
+    conn = sqlite3.connect('donalds_data.db')
+    c = conn.cursor()
+    query = "SELECT status, date, time, location FROM sightings"
+    c.execute(query)
+    for row in c:
+        results.append(list(row))
+    return results
+
+# func has sightings
+def get_sightings():
+    sightings_records = retrieve_records()
+    return sightings_records
+
+# func populates tab 5 content 'Records'
+def create_records():
+    sightings_array = get_sightings()
+    headings = ['SEEN STATUS', 'SIGHTING DATE', 'SIGHTING TIME', 'SIGHTING LOCATION']
+
+    layout_for_display = [
+        [sg.Table(values=sightings_array,
+                  headings=headings,
+                  max_col_width=35,
+                  auto_size_columns=True,
+                  display_row_numbers=True,
+                  justification='left',
+                  num_rows=10,
+                  key='SIGHTINGSTBL',
+                  row_height=60,
+                  enable_events=True,
+                  tooltip='All sightings of Donald'
+                  )]
+    ]
+    windowr=sg.Window('Summary results', layout_for_display, modal = True)
+
+    while True:
+        event, values = windowr.read()
+        if event == sg.WIN_CLOSED:
+            break
 
 def clear_inputs():
     for key in values:
@@ -99,6 +151,8 @@ while True:
         break
     if event == 'Clear':
         clear_inputs()
+    if event == 'Show records':
+        create_records()
     if event == 'Submit':
         status = values['STATUS']
         if status == '':
