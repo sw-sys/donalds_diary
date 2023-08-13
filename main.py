@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import sqlite3
+import csv
 
 ### DATABASE
 
@@ -36,7 +37,7 @@ layout = [
     [sg.Text('Enter a time HH:MM:SS'), sg.Push(), sg.Input(key='TIME', enable_events=False), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
     [sg.Text('Location (co-ordinates)'), sg.Push(), sg.Input(key='LOCATION'), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
     [sg.Text(' ')],
-    [sg.Button('Submit'), sg.Button('Clear'), sg.Push(), sg.Button('Show records'), sg.Push(), sg.Button('Exit')]
+    [sg.Button('Submit'), sg.Button('Clear'), sg.Push(), sg.Button('Show records'), sg.Button('Save to CSV'), sg.Push(), sg.Button('Exit')]
 ]
 
 # window event
@@ -109,6 +110,18 @@ def save_data_to_database():
     conn.commit()
     conn.close()
 
+# def export_to_csv():
+#     conn = sqlite3.connect('donalds_date.db')
+#     c = conn.cursor()
+#     query = "SELECT * FROM sightings"
+#     c.execute(query)
+#     with open('sightings.csv', 'w', newline='') as csvfile:
+#         writer = csv.writer(csvfile)
+#         writer.writerow(['Status', 'Date', 'Time', 'Location'])
+#         for row in c:
+#             writer.writerow(row)
+#     conn.close()
+
 while True:
     event, values=window.read()
     if event in (sg.WIN_CLOSED or 'Exit'):
@@ -117,6 +130,8 @@ while True:
         clear_inputs()
     if event == 'Show records':
         create_records()
+    # if event == 'Save to CSV':
+    #     export_to_csv()
     if event == 'Submit':
         status = values['STATUS']
         if status == '':
@@ -130,7 +145,6 @@ while True:
         location = values['LOCATION']
         if status == '':
             sg.PopupError('QUACK ALERT! Please insert a location')
-        #media = values['MEDIA']
         else:
             try:
                 summary_list = "The following bread crumbs have been added to the quackbase"
@@ -138,7 +152,7 @@ while True:
                 if choice =='OK':
                     clear_inputs()
                     save_data_to_database()
-                    sg.PopupQuick('Saved to quackbase!')
+                    sg.PopupQuick('Saved to quackbase and exported to csv!')
                 else:
                     sg.PopupOK('Edit entry')
             except:
