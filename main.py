@@ -28,54 +28,19 @@ sg.set_options(font=('Arial 12'), text_color='white')
 # options for status
 status_options = ['Seen', 'Not seen', 'Unknown']
 
-tab1_layout = [
-                [sg.Text(' ')],
-                [sg.Text('Status:'), sg.Combo(status_options, default_value=status_options[0], key='STATUS'), sg.Push(), sg.Push()],
-                [sg.Text('Enter Date YYYY-MM-DD'),sg.Input(key='DATE'), sg.Push(), sg.CalendarButton('Select', target='DATE', format='%Y-%m-%d')],
-                [sg.Text('Enter a time HH:MM:SS'), sg.Push(), sg.Input(key='TIME', enable_events=False), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
-                [sg.Text('Location (co-ordinates)'), sg.Push(), sg.Input(key='LOCATION'), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
-                #[sg.Text('Upload an image'), sg.Push(), sg.Input(key='MEDIA'), sg.FileBrowse()],
-                [sg.Text(' ')],
-                [sg.Button('Submit'), sg.Button('Clear'), sg.Push(), sg.Button('Show records'), sg.Push(), sg.Button('Exit')]
-                ]
-
-# TAB 2 content
-tab2_layout = [[sg.Text('Overview of when Donald was spotted this month')]]
-
-# TAB 3 content
-tab3_layout = [[sg.Text('Map of Donald\'s locations')]]
-
-# TAB 4 content
-tab4_layout = [[sg.Text('Photos of Donald')]]
-
-# TAB 5 content
-tab5_layout = [[sg.Text('All Records here and feature to export to .csv')],
-                [sg.Button('Show records')]]
-
-# define layouts for tabs
-tab_group_layout = [[sg.Tab('Submit', tab1_layout), 
-                     sg.Tab('Calendar', tab2_layout), 
-                     sg.Tab('Map', tab3_layout), 
-                     sg.Tab('Media', tab4_layout), 
-                     sg.Tab('Records', tab5_layout)]]
-
-tab_group = sg.TabGroup(tab_group_layout)
-
-# Header and tab holder
-
-header_layout =[
-    #[sg.Image(r'C:\Users\Sheldon\Documents\Coding\Donalds_Diary\Mallard_head.png')],
+layout = [
     [sg.Text('Where\'s Donald Today?                       ', font=('Arial',30), background_color='#69888D', text_color='white')], 
-    [sg.Text('')],
-]
-
-window_layout = [
-    header_layout,
-    [tab_group]
+    [sg.Text(' ')],
+    [sg.Text('Status:'), sg.Combo(status_options, default_value=status_options[0], key='STATUS'), sg.Push(), sg.Push()],
+    [sg.Text('Enter Date YYYY-MM-DD'),sg.Input(key='DATE'), sg.Push(), sg.CalendarButton('Select', target='DATE', format='%Y-%m-%d')],
+    [sg.Text('Enter a time HH:MM:SS'), sg.Push(), sg.Input(key='TIME', enable_events=False), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
+    [sg.Text('Location (co-ordinates)'), sg.Push(), sg.Input(key='LOCATION'), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
+    [sg.Text(' ')],
+    [sg.Button('Submit'), sg.Button('Clear'), sg.Push(), sg.Button('Show records'), sg.Push(), sg.Button('Exit')]
 ]
 
 # window event
-window = sg.Window('Donald\'s Diary', window_layout, no_titlebar=True, grab_anywhere=True)
+window = sg.Window('Donald\'s Diary', layout, no_titlebar=True, grab_anywhere=True)
 
 ### FUNCs for views
 # Records tab
