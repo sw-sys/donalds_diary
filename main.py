@@ -77,7 +77,6 @@ def create_records():
                   key='SIGHTINGSTBL',
                   row_height=60,
                   enable_events=True,
-                  tooltip='All sightings of Donald'
                   )]
     ]
     windowr=sg.Window('Summary results', layout_for_display, modal = True)
