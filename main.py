@@ -124,7 +124,7 @@ while True:
     if event == 'Show records':
         create_records()
     if event == 'save_button':
-        save_data_to_database()
+        #save_data_to_database()
         data = get_sightings()
         save_to_csv()
         sg.PopupQuick('Data saved to CSV file')
