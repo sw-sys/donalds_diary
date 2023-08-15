@@ -1,6 +1,7 @@
 import csv
 import sqlite3
 import PySimpleGUI as sg
+import pandas as pd
 
 ### DATABASE
 
@@ -110,9 +111,12 @@ def save_data_to_database():
     conn.close()
 
 def save_to_csv():
-    with open('sightings_records.csv', 'w', encoding='UTF8', newline='') as file:
+    data = get_sightings()
+    with open('sightings_records.csv', 'a', encoding='UTF8', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(data)
+        for row in data:
+            row = [item.strip("[]").replace("'", "") for item in row]
+            writer.writerow(row)
 
 while True:
     event, values=window.read()
