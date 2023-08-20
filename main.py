@@ -1,5 +1,5 @@
 import csv
-import regex as re
+import re
 import sqlite3
 import PySimpleGUI as sg
 
@@ -18,16 +18,13 @@ c.execute("""CREATE TABLE IF NOT EXISTS sightings
 conn.commit()
 conn.close()
 
-### DESIGN
+### GUI VISUAL DESIGN
 sg.theme('DarkGray6')
 sg.set_options(font=('Arial 12'), text_color='white')
 
 ### WINDOW CONTENT BEGINS
 
-### TABS FOR VIEWS
-
-# TAB 1 - data submission
-
+# #data submission
 # options for status
 status_options = ['Seen', 'Not seen', 'Unknown']
 
@@ -45,8 +42,7 @@ layout = [
 # window event
 window = sg.Window('Donald\'s Diary', layout, no_titlebar=True, grab_anywhere=True)
 
-### FUNCs for views
-# Records tab
+# Records
 
 # func gets records from db
 def retrieve_records():
@@ -120,10 +116,12 @@ def save_to_csv():
             writer.writerow(row)
 
 while True:
+    #close programm
     event, values=window.read()
     if event in (sg.WIN_CLOSED or 'Exit'):
         conn.close()
         break
+    # condition for buttons
     if event == 'Clear':
         clear_inputs()
     if event == 'Show records':
@@ -133,6 +131,7 @@ while True:
         data = get_sightings()
         save_to_csv()
         sg.PopupQuick('Data saved to CSV file')
+    # ensure no blank submissions
     if event == 'Submit':
         status = values['STATUS']
         if status == '':
@@ -143,17 +142,19 @@ while True:
             sg.PopupError('QUACK! \n Please insert a date')
             break
         else:
-            if not re.match(r'^\d{4}-\d{2}-\d{2}$', date):
-                sg.PopupError(f'QUACK! \n Date should be numerical \nand formatted as YYYY-MM-DD')
+            # date input format validation
+            if not re.match(r'^(2023-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9])|3[0-1])', date):
+                sg.PopupError(f'QUACK! \n Date should be realistic, numerical \nand formatted as YYYY-MM-DD')
         time = values['TIME']
         if time =='':
             sg.PopupError('QUACK! \n Please insert a time')
             break
         else:
-            if not re.match(r'^\d{2}:\d{2}$', time):
+            # time input format validation
+            if not re.match(r'^(0[1-9]|1[0-9]|2[0-3]):([0-5][0-9])$', time):
                 sg.PopupError(f'QUACK! \n Time should be numerical \n and formatted as HH:MM')
         location = values['LOCATION']
-        if status == '':
+        if location == '':
             sg.PopupError('QUACK! \n Please insert a location')
             break
         if status and date and time and location != '':
