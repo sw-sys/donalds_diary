@@ -24,25 +24,41 @@ sg.set_options(font=('Arial 12'), text_color='white')
 
 ### WINDOW CONTENT BEGINS
 
-# #data submission
+### data submission
 # options for status
-status_options = ['Seen', 'Not seen', 'Unknown']
+STATUS_OPTIONS = ['Seen', 'Not seen', 'Unknown']
+
+layout_l = [
+        [sg.Text('Where\'s Donald Today?', font=('Arial',30), background_color='#69888D', text_color='white')],
+            ]
+
+layout_r = [
+        [sg.Button('Exit')],
+            ]
+
+frame_layout = [
+                    [sg.Text(' ')],
+                    [sg.Text('Status:'), sg.Push(), sg.Combo(STATUS_OPTIONS, default_value=STATUS_OPTIONS[0], key='STATUS'), sg.Push(), sg.Push(), sg.Push()],
+                    [sg.Text('Enter Date YYYY-MM-DD:'),sg.Input(key='DATE'), sg.Push(), sg.CalendarButton('Select', target='DATE', format='%Y-%m-%d')],
+                    [sg.Text('Enter a time HH:MM:'), sg.Push(), sg.Push(), sg.Input(key='TIME', enable_events=False), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
+                    [sg.Text('Location:'), sg.Push(), sg.Push(), sg.Push(), sg.Input(key='LOCATION'), sg.Push(), sg.Push()],
+                    [sg.Text(' ')],
+                    [sg.Push(), sg.Push(), sg.Button('Submit'), sg.Button('Clear')],
+                    [sg.Text(' ')],
+                ]
 
 layout = [
-    [sg.Text('Where\'s Donald Today?                       ', font=('Arial',30), background_color='#69888D', text_color='white')], 
-    [sg.Text(' ')],
-    [sg.Text('Status:'), sg.Combo(status_options, default_value=status_options[0], key='STATUS'), sg.Push(), sg.Push()],
-    [sg.Text('Enter Date YYYY-MM-DD'),sg.Input(key='DATE'), sg.Push(), sg.CalendarButton('Select', target='DATE', format='%Y-%m-%d')],
-    [sg.Text('Enter a time HH:MM'), sg.Push(), sg.Input(key='TIME', enable_events=False), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
-    [sg.Text('Location (co-ordinates)'), sg.Push(), sg.Input(key='LOCATION'), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
-    [sg.Text(' ')],
-    [sg.Button('Submit'), sg.Button('Clear'), sg.Push(), sg.Button('Show records'), sg.Button('Save to CSV', key='save_button'), sg.Push(), sg.Button('Exit')]
-]
+            [sg.Col(layout_l), sg.Push(), sg.Col(layout_r)],
+            [sg.Text(' ')],
+            [sg.Frame('', frame_layout, title_color='white')],
+            [sg.Text(' ')],
+            [sg.Push(), sg.Button('Show records'), sg.Button('Save to CSV', key='save_button')],
+        ]
 
 # window event
 window = sg.Window('Donald\'s Diary', layout, no_titlebar=True, grab_anywhere=True)
 
-# Records
+### DATABASE
 
 # func gets records from db
 def retrieve_records():
@@ -55,12 +71,12 @@ def retrieve_records():
         results.append(list(row))
     return results
 
-# func has sightings
+# func holds sightings
 def get_sightings():
     sightings_records = retrieve_records()
     return sightings_records
 
-# func populates tab 5 content 'Records'
+# func populates 'Records'
 def create_records():
     sightings_array = get_sightings()
     headings = ['SEEN STATUS', 'SIGHTING DATE', 'SIGHTING TIME', 'SIGHTING LOCATION']
