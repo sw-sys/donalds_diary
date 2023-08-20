@@ -1,7 +1,8 @@
 import csv
+import regex as re
 import sqlite3
 import PySimpleGUI as sg
-import pandas as pd
+
 
 ### DATABASE
 
@@ -35,7 +36,7 @@ layout = [
     [sg.Text(' ')],
     [sg.Text('Status:'), sg.Combo(status_options, default_value=status_options[0], key='STATUS'), sg.Push(), sg.Push()],
     [sg.Text('Enter Date YYYY-MM-DD'),sg.Input(key='DATE'), sg.Push(), sg.CalendarButton('Select', target='DATE', format='%Y-%m-%d')],
-    [sg.Text('Enter a time HH:MM:SS'), sg.Push(), sg.Input(key='TIME', enable_events=False), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
+    [sg.Text('Enter a time HH:MM'), sg.Push(), sg.Input(key='TIME', enable_events=False), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
     [sg.Text('Location (co-ordinates)'), sg.Push(), sg.Input(key='LOCATION'), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
     [sg.Text(' ')],
     [sg.Button('Submit'), sg.Button('Clear'), sg.Push(), sg.Button('Show records'), sg.Button('Save to CSV', key='save_button'), sg.Push(), sg.Button('Exit')]
@@ -135,17 +136,28 @@ while True:
     if event == 'Submit':
         status = values['STATUS']
         if status == '':
-            sg.PopupError('QUACK ALERT! Please insert a status')
+            sg.PopupError('QUACK! \n Please insert a status')
+            break
         date = values['DATE']
         if date =='':
-            sg.PopupError('QUACK ALERT! Please insert a date')
+            sg.PopupError('QUACK! \n Please insert a date')
+            break
+        else:
+            if not re.match(r'^\d{4}-\d{2}-\d{2}$', date):
+                sg.PopupError(f'QUACK! \n Date should be numerical \nand formatted as YYYY-MM-DD')
         time = values['TIME']
         if time =='':
-            sg.PopupError('QUACK ALERT! Please insert a time')
+            sg.PopupError('QUACK! \n Please insert a time')
+            break
+        else:
+            if not re.match(r'^\d{2}:\d{2}$', time):
+                sg.PopupError(f'QUACK! \n Time should be numerical \n and formatted as HH:MM')
         location = values['LOCATION']
         if status == '':
-            sg.PopupError('QUACK ALERT! Please insert a location')
-        else:
+            sg.PopupError('QUACK! \n Please insert a location')
+            break
+        if status and date and time and location != '':
+        #else:
             try:
                 SUMMARY_LIST = "The following bread crumbs have been added to the quackbase"
                 CHOICE = sg.PopupOKCancel(SUMMARY_LIST, 'Please confirm entry')
@@ -156,6 +168,6 @@ while True:
                 else:
                     sg.PopupOK('Edit entry')
             except:
-                sg.Popup('MAJOR QUACK ALERT! Fetch the peas and try again.')
+                sg.Popup('MAJOR QUACK! \n Something went very wrong. \nFetch the peas and try again.')
 
 window.close()
