@@ -38,13 +38,12 @@ layout_r = [
 
 frame_layout = [
                     [sg.Text(' ')],
-                    [sg.Text('Status:'), sg.Push(), sg.Combo(STATUS_OPTIONS, default_value=STATUS_OPTIONS[0], key='STATUS'), sg.Push(), sg.Push(), sg.Push()],
-                    [sg.Text('Enter Date YYYY-MM-DD:'),sg.Input(key='DATE'), sg.Push(), sg.CalendarButton('Select', target='DATE', format='%Y-%m-%d')],
-                    [sg.Text('Enter a time HH:MM:'), sg.Push(), sg.Push(), sg.Input(key='TIME', enable_events=False), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
-                    [sg.Text('Location:'), sg.Push(), sg.Push(), sg.Push(), sg.Input(key='LOCATION'), sg.Push(), sg.Push()],
+                    [sg.Text('Status '), sg.Push(), sg.Combo(STATUS_OPTIONS, default_value=STATUS_OPTIONS[0], key='STATUS'), sg.Push(), sg.Push(), sg.Push()],
+                    [sg.Text('Enter Date YYYY-MM-DD'),sg.Input(key='DATE'), sg.Push(), sg.CalendarButton('Select', target='DATE', format='%Y-%m-%d')],
+                    [sg.Text('Enter a time HH:MM'), sg.Push(), sg.Push(), sg.Input(key='TIME', enable_events=False), sg.Push(), sg.Push(), sg.Push(), sg.Push()],
+                    [sg.Text('Location '), sg.Push(), sg.Push(), sg.Push(), sg.Input(key='LOCATION'), sg.Push(), sg.Push()],
                     [sg.Text(' ')],
                     [sg.Push(), sg.Push(), sg.Button('Submit'), sg.Button('Clear')],
-                    [sg.Text(' ')],
                 ]
 
 layout = [
